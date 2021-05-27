@@ -1,6 +1,7 @@
 import { GenericCommands } from '../commands/generic-commands';
 import { TruthOrDareCommands } from '../commands/truth-or-dare-commands';
 import { KeywordCommands } from '../commands/keyword-commands';
+import { HoroscopeCommands } from '../commands/horoscope-commands';
 
 export default {
     help: { class: GenericCommands, method: 'help' },
@@ -20,4 +21,7 @@ export default {
     keywordremove: { class: KeywordCommands, method: 'deleteKeyword' },
     keyworddelete: { class: KeywordCommands, method: 'deleteKeyword' },
     keywords: { class: KeywordCommands, method: 'keywords' },
+
+    horoscope: { class: HoroscopeCommands, method: 'getHoroscope' },
+    star: { class: HoroscopeCommands, method: 'getHoroscope' },
 }

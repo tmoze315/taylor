@@ -67,6 +67,10 @@ class GenericCommands extends BaseCommands {
             `**Play Truth or Dare with me**`,
             `\`?t truth [category]\` - Gives a random question that has to be answered truthfully. Default category is \`sfw\`. Supported categories are: ${truthCategories.join(', ')}`,
             `\`?t dare [category]\` - Gives a random dare that has to be completed. Default category is \`sfw\`. Supported categories are: ${dareCategories.join(', ')}`,
+            ``,
+            `**Horoscopes**`,
+            `\`?t horoscope [sign]\` - Show your horoscope for today`,
+            `\`?t sign [sign]\` - Alias for \`?t horoscope [sign]\``,
         ];
 
         const message = new MessageEmbed()

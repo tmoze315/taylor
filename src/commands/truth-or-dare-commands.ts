@@ -35,7 +35,7 @@ class TruthOrDareCommands extends BaseCommands {
         const messageEmbed = new MessageEmbed()
             .setTitle(question.question)
             .setFooter(`Truth - category: ${question.type} - id: #${question.questionId}`)
-            .setColor('RANDOM');
+            .setColor('#FBCFE8');
 
         return DiscordService.send(guildId, channelId, messageEmbed);
     }
@@ -138,7 +138,7 @@ class TruthOrDareCommands extends BaseCommands {
         const messageEmbed = new MessageEmbed()
             .setTitle(dare.dare)
             .setFooter(`Dare - category: ${dare.type} - id: #${dare.dareId}`)
-            .setColor('RANDOM');
+            .setColor('#FBCFE8');
 
         return DiscordService.send(guildId, channelId, messageEmbed);
     }
