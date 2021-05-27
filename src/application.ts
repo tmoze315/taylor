@@ -13,7 +13,7 @@ class Application {
         registry.register('message', message);
         registry.register('Config', Config);
 
-        const startsWithMention = message.content().startsWith(`<@!${client.user?.id}> `);
+        const startsWithMention = message.content().startsWith(`<@!${client.user?.id}> `) || message.content().startsWith(`<@${client.user?.id}> `);
 
         // Run all message listeners
         for (const listenerConfig of availableListeners) {
@@ -28,15 +28,15 @@ class Application {
             return;
         }
 
-        let messageContent = message.content().slice(prefix.length).trim();
+        let messageContent = message.content();
         let command = messageContent?.split(/ +/g)?.shift()?.toLowerCase()?.trim();
 
         if (startsWithMention) {
             command = 'crystalball';
-            messageContent = messageContent.replace(`${client.user?.id}>`, '').trim();
+            messageContent = messageContent.replace(`<@!${client.user?.id}>`, '').replace(`<@${client.user?.id}>`, '').trim();
+        } else {
+            messageContent = messageContent.slice(prefix.length).trim();
         }
-
-        ray(command);
 
         if (!command) {
             return;
