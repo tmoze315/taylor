@@ -24,4 +24,6 @@ export default {
 
     horoscope: { class: HoroscopeCommands, method: 'getHoroscope' },
     star: { class: HoroscopeCommands, method: 'getHoroscope' },
+    crystalball: { class: HoroscopeCommands, method: 'crystalBall' },
+    cb: { class: HoroscopeCommands, method: 'crystalBall' },
 }
