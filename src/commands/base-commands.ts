@@ -10,4 +10,8 @@ export default abstract class BaseCommands {
     @inject client: Client | null;
     @inject guildMembers: any;
     @inject guild: IGuild;
+
+    isOwner(authorId: string | number) {
+        return this.Config.ownerIds.includes(`${authorId}`);
+    }
 }

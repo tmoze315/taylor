@@ -4,23 +4,13 @@ import { makeErrorMessage } from "../messages/error";
 import { CollectorFilter, Message, MessageEmbed, MessageReaction } from "discord.js";
 import { Question } from "../models/Question";
 import { Dare } from "../models/Dare";
+import { ray } from "node-ray";
+import { DiscordService } from "../services/discord-service";
 
 class TruthOrDareCommands extends BaseCommands {
     async truth(type: string = 'sfw') {
         const guildId = this.message.guildId();
         const channelId = this.message.channelId();
-
-        const guildFound = this.client?.guilds.cache.find((guild: any) => {
-            return guild.id === guildId;
-        });
-
-        const channel: any = guildFound?.channels.cache.find((channel: any) => {
-            return channel.id === channelId;
-        });
-
-        if (this.guild.enabled !== true || !channel) {
-            return;
-        }
 
         if (!type || type.trim() === '') {
             type = 'sfw';
@@ -37,7 +27,7 @@ class TruthOrDareCommands extends BaseCommands {
         ]);
 
         if (!questions || questions.length < 1) {
-            return channel.send(makeErrorMessage('Oops, I couldn\'t find any questions. Try adding one with `m/truthadd`'));
+            return DiscordService.send(guildId, channelId, makeErrorMessage('Oops, I couldn\'t find any questions. Try adding one with `?t truthadd`'));
         }
 
         const question = questions[0];
@@ -47,7 +37,7 @@ class TruthOrDareCommands extends BaseCommands {
             .setFooter(`Truth - category: ${question.type} - id: #${question.questionId}`)
             .setColor('RANDOM');
 
-        return channel.send(messageEmbed);
+        return DiscordService.send(guildId, channelId, messageEmbed);
     }
 
     async addTruth(questionText: string = '') {
@@ -55,35 +45,23 @@ class TruthOrDareCommands extends BaseCommands {
         const channelId = this.message.channelId();
         const authorId = this.message.author().id;
 
-        const guildFound = this.client?.guilds.cache.find((guild: any) => {
-            return guild.id === guildId;
-        });
-
-        const channel: any = guildFound?.channels.cache.find((channel: any) => {
-            return channel.id === channelId;
-        });
-
-        if (this.guild.enabled !== true || !channel) {
-            return;
-        }
-
         if (!this.guild.isAdmin(authorId)) {
             return
         }
 
         if (!questionText) {
-            return channel.send(makeErrorMessage(`You can add a question using the following format (use \`sfw\` or \`r\` as the categories)
+            return DiscordService.send(guildId, channelId, makeErrorMessage(`You can add a question using the following format (use \`sfw\` or \`r\` as the categories)
 
-            \`m/truthadd "This is the question" r\``));
+            \`?t truthadd "This is the question" r\``));
         }
 
         const regex = new RegExp(/"(.*)" (.*)/gm);
         const matches = regex.exec(questionText);
 
         if (!matches || matches.length !== 3) {
-            return channel.send(makeErrorMessage(`You can add a question using the following format (use \`sfw\` or \`r\` as the categories)
+            return DiscordService.send(guildId, channelId, makeErrorMessage(`You can add a question using the following format (use \`sfw\` or \`r\` as the categories)
 
-            \`m/truthadd "This is the question" r\``));
+            \`?t truthadd "This is the question" r\``));
         }
 
         const [, questionString, type] = matches;
@@ -107,7 +85,7 @@ class TruthOrDareCommands extends BaseCommands {
 
         await question.save();
 
-        return channel.send(makeSuccessMessage(`Question (#${questionId}) successfully added!`));
+        return DiscordService.send(guildId, channelId, makeSuccessMessage(`Question (#${questionId}) successfully added!`));
     }
 
     async deleteTruth(params: string) {
@@ -115,52 +93,28 @@ class TruthOrDareCommands extends BaseCommands {
         const channelId = this.message.channelId();
         const authorId = this.message.author().id;
 
-        const guildFound = this.client?.guilds.cache.find((guild: any) => {
-            return guild.id === guildId;
-        });
-
-        const channel: any = guildFound?.channels.cache.find((channel: any) => {
-            return channel.id === channelId;
-        });
-
-        if (this.guild.enabled !== true || !channel) {
-            return;
-        }
-
         if (!this.guild.isAdmin(authorId)) {
             return
         }
 
         if (!params) {
-            return channel.send(makeErrorMessage('Please add a question id (e.g. 3).'));
+            return DiscordService.send(guildId, channelId, makeErrorMessage('Please add a question id (e.g. 3).'));
         }
 
         const question = await Question.findOne({ guildId: guildId, questionId: parseInt(params) });
 
         if (!question) {
-            return channel.send(makeErrorMessage('Question not found with that id'));
+            return DiscordService.send(guildId, channelId, makeErrorMessage('Question not found with that id'));
         }
 
         await question.remove();
 
-        return channel.send(makeSuccessMessage('Question was successfully deleted'));
+        return DiscordService.send(guildId, channelId, makeSuccessMessage('Question was successfully deleted'));
     }
 
     async dare(type: string = 'sfw') {
         const guildId = this.message.guildId();
         const channelId = this.message.channelId();
-
-        const guildFound = this.client?.guilds.cache.find((guild: any) => {
-            return guild.id === guildId;
-        });
-
-        const channel: any = guildFound?.channels.cache.find((channel: any) => {
-            return channel.id === channelId;
-        });
-
-        if (this.guild.enabled !== true || !channel) {
-            return;
-        }
 
         const query = <any>{
             guildId: guildId,
@@ -176,7 +130,7 @@ class TruthOrDareCommands extends BaseCommands {
         ]);
 
         if (!dares || dares.length < 1) {
-            return channel.send(makeErrorMessage('Oops, I couldn\'t find any dares. Try adding one with `m/dareadd`'));
+            return DiscordService.send(guildId, channelId, makeErrorMessage('Oops, I couldn\'t find any dares. Try adding one with `?t dareadd`'));
         }
 
         const dare = dares[0];
@@ -186,7 +140,7 @@ class TruthOrDareCommands extends BaseCommands {
             .setFooter(`Dare - category: ${dare.type} - id: #${dare.dareId}`)
             .setColor('RANDOM');
 
-        return channel.send(messageEmbed);
+        return DiscordService.send(guildId, channelId, messageEmbed);
     }
 
     async addDare(dareText: string = '') {
@@ -194,35 +148,23 @@ class TruthOrDareCommands extends BaseCommands {
         const channelId = this.message.channelId();
         const authorId = this.message.author().id;
 
-        const guildFound = this.client?.guilds.cache.find((guild: any) => {
-            return guild.id === guildId;
-        });
-
-        const channel: any = guildFound?.channels.cache.find((channel: any) => {
-            return channel.id === channelId;
-        });
-
-        if (this.guild.enabled !== true || !channel) {
-            return;
-        }
-
         if (!this.guild.isAdmin(authorId)) {
             return
         }
 
         if (!dareText) {
-            return channel.send(makeErrorMessage(`You can add a dare using the following format (use \`sfw\` or \`r\` as the categories)
+            return DiscordService.send(guildId, channelId, makeErrorMessage(`You can add a dare using the following format (use \`sfw\` or \`r\` as the categories)
 
-            \`m/dareadd "This is the dare" r\``));
+            \`?t dareadd "This is the dare" r\``));
         }
 
         const regex = new RegExp(/"(.*)" (.*)/gm);
         const matches = regex.exec(dareText);
 
         if (!matches || matches.length !== 3) {
-            return channel.send(makeErrorMessage(`You can add a dare using the following format (use \`sfw\` or \`r\` as the categories)
+            return DiscordService.send(guildId, channelId, makeErrorMessage(`You can add a dare using the following format (use \`sfw\` or \`r\` as the categories)
 
-            \`m/dareadd "This is the dare" r\``));
+            \`?t dareadd "This is the dare" r\``));
         }
 
         const [, dareString, type] = matches;
@@ -246,7 +188,7 @@ class TruthOrDareCommands extends BaseCommands {
 
         await dare.save();
 
-        return channel.send(makeSuccessMessage(`Dare (#${dareId}) successfully added!`));
+        return DiscordService.send(guildId, channelId, makeSuccessMessage(`Dare (#${dareId}) successfully added!`));
     }
 
     async deleteDare(params: string) {
@@ -254,35 +196,23 @@ class TruthOrDareCommands extends BaseCommands {
         const channelId = this.message.channelId();
         const authorId = this.message.author().id;
 
-        const guildFound = this.client?.guilds.cache.find((guild: any) => {
-            return guild.id === guildId;
-        });
-
-        const channel: any = guildFound?.channels.cache.find((channel: any) => {
-            return channel.id === channelId;
-        });
-
-        if (this.guild.enabled !== true || !channel) {
-            return;
-        }
-
         if (!this.guild.isAdmin(authorId)) {
             return
         }
 
         if (!params) {
-            return channel.send(makeErrorMessage('Please add a dare id (e.g. 3).'));
+            return DiscordService.send(guildId, channelId, makeErrorMessage('Please add a dare id (e.g. 3).'));
         }
 
         const dare = await Dare.findOne({ guildId: guildId, dareId: parseInt(params) });
 
         if (!dare) {
-            return channel.send(makeErrorMessage('Dare not found with that id'));
+            return DiscordService.send(guildId, channelId, makeErrorMessage('Dare not found with that id'));
         }
 
         await dare.remove();
 
-        return channel.send(makeSuccessMessage('Dare was successfully deleted'));
+        return DiscordService.send(guildId, channelId, makeSuccessMessage('Dare was successfully deleted'));
     }
 }
 

@@ -5,7 +5,6 @@ interface IMessage {
     content(): string;
     original(): DiscordMessage;
     author(): User;
-    // player(): Promise<IPlayer>;
     guildId(): string | null;
     channelId(): string | null;
     isFromBot(): boolean;
@@ -28,21 +27,6 @@ class Message implements IMessage {
 
         return new User(user.id, user.username);
     }
-
-    // async player(): Promise<IPlayer> {
-    //     // Cache the current player to save DB queries
-    //     if (this.currentPlayer) {
-    //         return this.currentPlayer;
-    //     }
-
-    //     this.currentPlayer = await Player.findOne({ id: this.discordMessage.author.id }).exec();
-
-    //     if (!this.currentPlayer) {
-    //         throw new Error('No player found.');
-
-    //     }
-    //     return this.currentPlayer;
-    // }
 
     guildId(): string | null {
         return this.discordMessage?.guild?.id || null;

@@ -1,7 +1,7 @@
 interface IConfig {
     enabled: boolean,
     adminPassword: string,
-    ownerId: string,
+    ownerIds: Array<string>,
     prefix: string,
     discord: {
         key: string,
@@ -14,14 +14,14 @@ interface IConfig {
 };
 
 const Config = <IConfig>{
-    ownerId: process.env.OWNER_ID,
+    ownerIds: process.env.OWNER_IDS?.split(';'),
     adminPassword: process.env.ADMIN_PASSWORD,
     prefix: process.env.PREFIX || '-',
     discord: {
         key: process.env.DISCORD_KEY,
     },
     mongodb: {
-        url: process.env.MONGODB_URL || 'mongodb://127.0.0.1:27017/mishkajokes',
+        url: process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/taylor',
         useCreateIndex: process.env.MONGODB_CREATE_INDEX || true,
         autoIndex: process.env.MONGODB_AUTO_INDEX || true,
     },

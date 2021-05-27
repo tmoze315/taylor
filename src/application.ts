@@ -1,26 +1,25 @@
-import { IMessage, Message } from './discord/message';
-import { inject } from '@alexlafroscia/service-locator';
-import { IConfig } from './config/adventure';
-import { Client, Collection, GuildMember } from 'discord.js';
+import { Message } from './discord/message';
+import { Client } from 'discord.js';
 import availableCommands from './config/available-commands';
-// import availableListeners from './config/available-listeners';
-import { IGuild, Guild } from './models/Guild';
-import { ray } from 'node-ray';
+import availableListeners from './config/available-listeners';
+import { Guild } from './models/Guild';
 import { registry } from '@alexlafroscia/service-locator';
 import { Config } from './config/adventure';
 
 class Application {
     async handleMessage(message: Message, client: Client) {
+        registry.register('client', client);
+        registry.register('message', message);
+        registry.register('Config', Config);
+
         // Run all message listeners
-        // if (this.guild.enabled === true) {
-        //     for (const listenerConfig of availableListeners) {
-        //         const commandInstance = new listenerConfig.class();
+        for (const listenerConfig of availableListeners) {
+            const commandInstance = new listenerConfig.class();
 
-        //         await commandInstance.handle();
-        //     };
-        // }
+            await commandInstance.handle();
+        };
 
-        const prefix = Config.prefix || 'm/';
+        const prefix = Config.prefix || '?t';
 
         if (!message.content().toLowerCase().startsWith(prefix) || message.isFromBot()) {
             return;
@@ -58,11 +57,8 @@ class Application {
             guild = await newGuild.save();
         }
 
-        registry.register('client', client);
-        registry.register('message', message);
         registry.register('guild', guild);
         registry.register('guildMembers', guildMembers);
-        registry.register('Config', Config);
 
         // Create the controller, so we have a reference to the message available at all times
         const commandInstance = new route.class();
