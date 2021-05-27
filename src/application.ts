@@ -5,7 +5,7 @@ import availableListeners from './config/available-listeners';
 import { Guild } from './models/Guild';
 import { registry } from '@alexlafroscia/service-locator';
 import { Config } from './config/adventure';
-import { ray } from 'node-ray';
+
 
 class Application {
     async handleMessage(message: Message, client: Client) {
@@ -29,13 +29,14 @@ class Application {
         }
 
         let messageContent = message.content();
-        let command = messageContent?.split(/ +/g)?.shift()?.toLowerCase()?.trim();
+        let command = null;
 
         if (startsWithMention) {
-            command = 'crystalball';
             messageContent = messageContent.replace(`<@!${client.user?.id}>`, '').replace(`<@${client.user?.id}>`, '').trim();
+            command = 'crystalball';
         } else {
             messageContent = messageContent.slice(prefix.length).trim();
+            command = messageContent?.split(/ +/g)?.shift()?.toLowerCase()?.trim();
         }
 
         if (!command) {
