@@ -109,8 +109,7 @@ class HoroscopeCommands extends BaseCommands {
         const answer = sample((availableAnswers as any)[type]);
 
         const message = new MessageEmbed()
-            .setTitle(`"${cleanQuestion}"`)
-            .setDescription(`🔮 - ${answer}`)
+            .setDescription(`**"${cleanQuestion}"**\n\n🔮 - ${answer}`)
             .setThumbnail('https://i.imgur.com/7IhNJ4s.jpg')
             .setColor('#FBCFE8');
 
