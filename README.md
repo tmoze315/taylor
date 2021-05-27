@@ -1,12 +1,16 @@
-# Inventure
+# Taylor Swift Discord Bot
 
-Real basics of the bot setup.
+Supports:
+
+- Responds to keywords with messages or gifs
+- Truth or Dare
+
+Real basics of the bot setup:
 
 Duplicate `.env.example` and call it `.env`. Add your Discord API Token here.
 
 Install dependencies with:
-npm install
+`npm install`
 
 Build and run with:
-npm run watch
-
+`npm run watch`
