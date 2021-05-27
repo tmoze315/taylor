@@ -71,7 +71,7 @@ class KeywordCommands extends BaseCommands {
 
         const [, keywordString, keywordResponse] = matches;
 
-        const existingKeywords = await Keyword.find({ guildId: guildId, keyword: keywordString.trim().toLowerCase() }).limit(1);
+        const existingKeywords = await Keyword.find({ guildId: guildId, searchableKeyword: slugify(keywordString, { lower: true, strict: true }) }).limit(1);
 
         if (existingKeywords.length > 0) {
             const existingKeyword = existingKeywords[0];
