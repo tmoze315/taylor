@@ -5,12 +5,15 @@ import availableListeners from './config/available-listeners';
 import { Guild } from './models/Guild';
 import { registry } from '@alexlafroscia/service-locator';
 import { Config } from './config/adventure';
+import { ray } from 'node-ray';
 
 class Application {
     async handleMessage(message: Message, client: Client) {
         registry.register('client', client);
         registry.register('message', message);
         registry.register('Config', Config);
+
+        const startsWithMention = message.content().startsWith(`<@!${client.user?.id}> `);
 
         // Run all message listeners
         for (const listenerConfig of availableListeners) {
@@ -21,12 +24,19 @@ class Application {
 
         const prefix = Config.prefix || '?t';
 
-        if (!message.content().toLowerCase().startsWith(prefix) || message.isFromBot()) {
+        if ((!message.content().toLowerCase().startsWith(prefix) && !startsWithMention) || message.isFromBot()) {
             return;
         }
 
-        const messageContent = message.content().slice(prefix.length).trim();
-        const command = messageContent?.split(/ +/g)?.shift()?.toLowerCase()?.trim();
+        let messageContent = message.content().slice(prefix.length).trim();
+        let command = messageContent?.split(/ +/g)?.shift()?.toLowerCase()?.trim();
+
+        if (startsWithMention) {
+            command = 'crystalball';
+            messageContent = messageContent.replace(`${client.user?.id}>`, '').trim();
+        }
+
+        ray(command);
 
         if (!command) {
             return;

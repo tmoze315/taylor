@@ -4,6 +4,8 @@ Supports:
 
 - Responds to keywords with messages or gifs
 - Truth or Dare
+- Horoscopes
+- Crystalball
 
 Real basics of the bot setup:
 
