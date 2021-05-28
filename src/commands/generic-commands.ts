@@ -110,6 +110,40 @@ class GenericCommands extends BaseCommands {
 
         return;
     }
+
+    async say(input: string) {
+        const guildId = this.message.guildId();
+        const channelId = this.message.channelId();
+        const message = this.message.original();
+        const authorId = this.message.author().id;
+
+        if (!this.guild.isAdmin(authorId)) {
+            return
+        }
+
+        const regex = new RegExp(/<#(.*)> ([\s\S]*)/gm);
+        const matches = regex.exec(input);
+
+        const desc = [
+            `You can make me say something in any channel you want:`,
+            ``,
+            `\`?t say #general Hey babe!\``,
+        ];
+
+        const helpMessage = new MessageEmbed()
+            .setDescription(desc.join('\n'))
+            .setColor('#FBCFE8');
+
+        if (!matches || matches.length !== 3) {
+            return DiscordService.send(guildId, channelId, helpMessage);
+        }
+
+        const [, channelIdToPostTo, messageToSend] = matches;
+
+        await DiscordService.send(guildId, channelIdToPostTo, messageToSend);
+
+        return message.react('✅');
+    }
 }
 
 export { GenericCommands };

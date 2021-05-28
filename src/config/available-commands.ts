@@ -7,6 +7,7 @@ export default {
     help: { class: GenericCommands, method: 'help' },
     addadmin: { class: GenericCommands, method: 'addAdmin' },
     removeadmin: { class: GenericCommands, method: 'removeAdmin' },
+    say: { class: GenericCommands, method: 'say' },
 
     truth: { class: TruthOrDareCommands, method: 'truth' },
     truthadd: { class: TruthOrDareCommands, method: 'addTruth' },
