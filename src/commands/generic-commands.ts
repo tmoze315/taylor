@@ -2,7 +2,7 @@ import BaseCommands from "./base-commands";
 import { makeSuccessMessage } from "../messages/success";
 import { makeErrorMessage } from "../messages/error";
 import { DiscordService } from "../services/discord-service";
-import { MessageEmbed } from "discord.js";
+import { CollectorFilter, MessageEmbed } from "discord.js";
 import { Question } from "../models/Question";
 import { ray } from "node-ray";
 import { Dare } from "../models/Dare";
@@ -142,7 +142,23 @@ class GenericCommands extends BaseCommands {
 
         await DiscordService.send(guildId, channelIdToPostTo, messageToSend);
 
-        return message.react('✅');
+        await message.react('🚮');
+
+        const emojiFilter: CollectorFilter = async (reaction, user) => {
+            if (reaction.emoji.name === '🚮') {
+                return true;
+            }
+
+            return false;
+        };
+
+        const reactions = await message.awaitReactions(emojiFilter, { max: 1, time: 15000 });
+
+        if (reactions.first()?.emoji.name === '🚮') {
+            return message.delete();
+        }
+
+        return message.reactions.removeAll();
     }
 }
 
